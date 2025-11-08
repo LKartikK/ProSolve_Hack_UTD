@@ -1,1 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Crypto Copilot — Nemotron Macro Index</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Charts (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <img src="./assets/logo.png" alt="Crypto Copilot" class="logo">
+        <div>
+          <div class="title">Crypto Copilot</div>
+          <div class="subtitle">Nemotron-Powered Daily Macro Index</div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label>Budget (USD)</label>
+          <div class="money-input">
+            <span>$</span>
+            <input id="budget" type="number" min="100" step="100" value="1000">
+          </div>
+        </div>
+        <div class="control">
+          <label>Risk</label>
+          <select id="risk">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>Horizon</label>
+          <select id="horizon">
+            <option value="short">1–4 weeks</option>
+            <option value="medium" selected>1–6 months</option>
+            <option value="long">1+ year</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>Assets</label>
+          <div class="asset-pills">
+            <label><input type="checkbox" value="BTC" checked> BTC</label>
+            <label><input type="checkbox" value="ETH" checked> ETH</label>
+            <label><input type="checkbox" value="SOL" checked> SOL</label>
+            <label><input type="checkbox" value="AI" checked> AI Basket</label>
+          </div>
+        </div>
+        <button id="runBtn" class="btn run">Run Analysis</button>
+        <button id="pdfBtn" class="btn secondary">Download PDF</button>
+      </div>
+    </header>
+
+    <section class="overview">
+      <div class="panel heatstrip">
+        <div class="panel-title">Market Heatstrip</div>
+        <div id="heatstripList" class="heatstrip-list skeleton"></div>
+      </div>
+
+      <div class="panel gauge">
+        <div class="panel-title">Market Composite Score</div>
+        <canvas id="gaugeCanvas" height="160"></canvas>
+        <div class="mini-bars">
+          <div class="mini"><span>Sentiment</span><div class="bar"><div id="barSentiment"></div></div></div>
+          <div class="mini"><span>Momentum</span><div class="bar"><div id="barMomentum"></div></div></div>
+          <div class="mini"><span>Volatility</span><div class="bar"><div id="barVolatility"></div></div></div>
+          <div class="mini"><span>Liquidity</span><div class="bar"><div id="barLiquidity"></div></div></div>
+        </div>
+        <div id="marketBadge" class="badge">—</div>
+      </div>
+
+      <div class="panel donut">
+        <div class="panel-title">Allocation</div>
+        <canvas id="donutCanvas" height="160"></canvas>
+        <div class="legend" id="donutLegend"></div>
+      </div>
+    </section>
+
+    <section class="assets">
+      <div class="section-title">Assets</div>
+      <div id="assetGrid" class="asset-grid"></div>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <footer>
+      <span>Powered by NVIDIA Nemotron • <span id="runTime">—</span></span>
+    </footer>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
 
