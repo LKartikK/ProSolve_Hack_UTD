@@ -18,22 +18,6 @@ All backed by a **FastAPI + SQLite** backend and a fully modular frontend.
 
 ---
 
-# 🌟 Elevator Pitch
-
-**ProSolve turns product intuition into AI-backed strategy.**  
-Submit any idea — new feature, business plan, market move — and ProSolve transforms it into:
-
-- A complete scenario analysis  
-- Feasibility & impact scores  
-- Key metrics  
-- Risks & opportunities  
-- Strategic recommendation  
-- Stored task that updates automatically  
-
-It is the fastest way for product teams to **compare ideas**, **prioritize intelligently**, and **move forward with confidence**.
-
----
-
 # 🔥 Core Features
 
 ### ✅ **AI Scenario Evaluation**
