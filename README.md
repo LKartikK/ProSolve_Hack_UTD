@@ -115,3 +115,71 @@ Shows:
 
 # 📂 Project Structure
 
+prosolve/
+│
+├── frontend/
+│ ├── index.html
+│ ├── styles.css
+│ ├── app.js
+│ ├── api.js
+│ ├── ui.js
+│ └── assets/
+│
+├── backend/
+│ ├── app.py
+│ ├── utils/
+│ │ └── llm_client.py
+│ ├── prompts/
+│ │ └── templates.py
+│ ├── storage/
+│ └── prosolve.db (auto-created)
+│
+└── README.md
+
+
+---
+
+# ⚙️ Installation & Setup
+
+## ✅ 1. Backend Setup
+
+### Install Python dependencies:
+```bash
+cd backend
+pip install -r requirements.txt
+
+**RUN FASTAPI**
+uvicorn app:app --reload --port 8000
+✅ SQLite ready at sqlite:///./prosolve.db
+
+**RUN FRONTEND**
+
+frontend/index.html
+Right click → "Open with Live Server"
+
+
+**How ProSolve Works**
+[User] 
+   ↓ enters scenario
+[Frontend App.js]
+   ↓ builds text + payload
+[API /simulate]
+   ↓ calls LLM (Groq)
+[LLM JSON Output]
+   ↓ Scores + Risks + Metrics
+[FastAPI Backend]
+   ↓ Saves to SQLite
+[Frontend]
+   ↓ Renders scenario card
+   ↓ Updates Today’s Work
+
+The LLM request includes:
+
+  System prompt template
+  Scenario text
+  Context object
+  Required JSON schema
+  Backend guarantees:
+  Always returns structured JSON
+  Automatically logs errors
+  Mock fallback enabled
