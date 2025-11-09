@@ -3,497 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Copilot - AI Trading Assistant</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>AI Scenario Planning Simulator</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7c3aed',
+                        'primary-dark': '#6d28d9',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    
-    <!-- Top Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <!-- Logo/Brand -->
-            <div class="brand">
-                <span class="brand-icon">🤖</span>
-                <span class="brand-name">Crypto Copilot</span>
-            </div>
-
-            <!-- Navigation Tabs -->
-            <div class="nav-tabs">
-                <button class="nav-tab active" data-tab="welcome" onclick="window.switchTab('welcome')">
-                    <span class="tab-icon">🏠</span>
-                    Welcome
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900">AI Scenario Planning Simulator</h1>
+                        <p class="text-sm text-slate-600">Strategic decision-making for Product Managers</p>
+                    </div>
+                </div>
+                <button id="new-scenario-btn" class="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    New Scenario
                 </button>
-                <button class="nav-tab" data-tab="sentiment" onclick="window.switchTab('sentiment')">
-                    <span class="tab-icon">📰</span>
-                    Market Sentiment
-                </button>
-                <button class="nav-tab" data-tab="budgeting" onclick="window.switchTab('budgeting')">
-                    <span class="tab-icon">💼</span>
-                    Trading Budgeting
-                </button>
-            </div>
-
-            <!-- User Profile -->
-            <div class="user-profile">
-                <span class="user-greeting">Welcome back, <strong id="user-name">User</strong></span>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content Area -->
-    <main class="main-content">
-
-        <!-- WELCOME TAB -->
-        <section id="welcome-tab" class="tab-content active">
-            <div class="container">
-                
-                <!-- Hero Section -->
-                <div class="welcome-hero">
-                    <h1 class="hero-title">Welcome to Crypto Copilot</h1>
-                    <p class="hero-subtitle">Your AI-powered trading assistant using NVIDIA Nemotron</p>
-                </div>
-
-                <!-- Setup Card -->
-                <div class="card">
-                    <h2 class="card-title">Get Started</h2>
-                    <p class="card-description">Set up your profile to receive personalized trading insights</p>
-                    
-                    <div class="form-group">
-                        <label for="user-name-input">Your Name</label>
-                        <input 
-                            type="text" 
-                            id="user-name-input" 
-                            placeholder="Enter your name"
-                            class="input-field"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="budget-input">Total Budget ($)</label>
-                        <input 
-                            type="number" 
-                            id="budget-input" 
-                            placeholder="1000"
-                            value="1000"
-                            class="input-field"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="risk-input">Risk Tolerance</label>
-                        <select id="risk-input" class="input-field">
-                            <option value="low">Low - Conservative</option>
-                            <option value="medium" selected>Medium - Balanced</option>
-                            <option value="high">High - Aggressive</option>
-                        </select>
-                    </div>
-
-                    <button onclick="window.saveProfile()" class="btn-primary">
-                        Save Profile
-                    </button>
-                </div>
-
-                <!-- Quick Stats -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">📊</div>
-                        <div class="stat-value" id="total-budget">$0</div>
-                        <div class="stat-label">Total Budget</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">⚡</div>
-                        <div class="stat-value" id="risk-level">Medium</div>
-                        <div class="stat-label">Risk Level</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🎯</div>
-                        <div class="stat-value">3</div>
-                        <div class="stat-label">Assets Tracked</div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Scenario Creator Form (Hidden by default) -->
+        <div id="scenario-creator" class="hidden mb-8">
+            <div class="bg-white rounded-xl shadow-lg border-2 border-violet-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-violet-50 to-indigo-50 px-6 py-4 border-b border-violet-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                Create New Scenario
+                            </h2>
+                            <p class="text-sm text-slate-600 mt-1">Define your strategic scenario and let AI analyze feasibility, impact, and recommendations</p>
+                        </div>
+                        <button id="close-creator-btn" class="text-slate-400 hover:text-slate-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
+                <form id="scenario-form" class="p-6 space-y-6">
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <div>
+                            <label for="scenario-name" class="block text-sm font-medium text-slate-700 mb-2">Scenario Name *</label>
+                            <input type="text" id="scenario-name" required 
+                                   class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                                   placeholder="e.g., Launch AI-powered analytics feature">
+                        </div>
+                        <div>
+                            <label for="timeline" class="block text-sm font-medium text-slate-700 mb-2">Timeline *</label>
+                            <input type="text" id="timeline" required
+                                   class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                                   placeholder="e.g., 3-6 months">
+                        </div>
+                    </div>
 
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-slate-700 mb-2">Description *</label>
+                        <textarea id="description" required rows="3"
+                                  class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                                  placeholder="Describe the scenario, its goals, and expected outcomes..."></textarea>
+                    </div>
+
+                    <div>
+                        <label for="target-market" class="block text-sm font-medium text-slate-700 mb-2">Target Market *</label>
+                        <input type="text" id="target-market" required
+                               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                               placeholder="e.g., Enterprise SaaS customers, SMBs, Consumer mobile users">
+                    </div>
+
+                    <div>
+                        <label for="resources" class="block text-sm font-medium text-slate-700 mb-2">Required Resources</label>
+                        <textarea id="resources" rows="2"
+                                  class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                                  placeholder="e.g., 2 engineers, 1 designer, $50K budget"></textarea>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="block text-sm font-medium text-slate-700">Key Assumptions</label>
+                            <button type="button" id="add-assumption-btn" 
+                                    class="text-sm text-violet-600 hover:text-violet-700 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Add Assumption
+                            </button>
+                        </div>
+                        <div id="assumptions-container" class="space-y-2">
+                            <div class="assumption-input flex gap-2">
+                                <input type="text" class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                                       placeholder="e.g., Users will adopt new feature within 30 days">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 pt-4 border-t border-slate-200">
+                        <button type="submit" class="bg-violet-600 hover:bg-violet-700 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            Generate AI Analysis
+                        </button>
+                        <button type="button" id="cancel-form-btn" class="px-6 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
             </div>
-        </section>
+        </div>
 
-        <!-- MARKET SENTIMENT TAB -->
-        <section id="sentiment-tab" class="tab-content">
-            <div class="container">
-                
-                <div class="page-header">
-                    <h1 class="page-title">Market Sentiment Analysis</h1>
-                    <p class="page-subtitle">AI-powered insights from latest crypto news headlines</p>
-                    <button onclick="window.runSentimentAnalysis()" class="btn-primary" id="sentiment-btn">
-                        🚀 Analyze Market Sentiment
-                    </button>
-                </div>
+        <!-- Tabs Navigation -->
+        <div id="tabs-navigation" class="bg-white rounded-lg shadow-sm border border-slate-200 p-1 mb-6 flex gap-1">
+            <button class="tab-btn active flex-1 px-4 py-2 rounded-md flex items-center justify-center gap-2 transition-colors" data-tab="overview">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                </svg>
+                All Scenarios
+            </button>
+            <button class="tab-btn flex-1 px-4 py-2 rounded-md flex items-center justify-center gap-2 transition-colors" data-tab="compare" id="compare-tab">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                </svg>
+                Compare (<span id="compare-count">0</span>)
+            </button>
+            <button class="tab-btn flex-1 px-4 py-2 rounded-md flex items-center justify-center gap-2 transition-colors" data-tab="insights">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                </svg>
+                AI Insights
+            </button>
+        </div>
 
-                <!-- Loading State -->
-                <div id="sentiment-loading" class="loading-state hidden">
-                    <div class="spinner"></div>
-                    <p class="loading-text">AI agents analyzing news headlines...</p>
-                </div>
-
-                <!-- Sentiment Results -->
-                <div id="sentiment-results" class="hidden">
-                    
-                    <!-- Overall Sentiment Card -->
-                    <div class="card sentiment-overview">
-                        <h2 class="card-title">Overall Market Sentiment</h2>
-                        <div class="sentiment-score-container">
-                            <div class="sentiment-meter">
-                                <div id="sentiment-meter-fill" class="sentiment-meter-fill" style="width: 0%"></div>
-                            </div>
-                            <div class="sentiment-labels">
-                                <span>Bearish</span>
-                                <span id="sentiment-percentage">0%</span>
-                                <span>Bullish</span>
-                            </div>
-                        </div>
-                        <p id="sentiment-summary" class="sentiment-summary">
-                            Loading analysis...
-                        </p>
-                    </div>
-
-                    <!-- Asset Sentiment Cards -->
-                    <div class="assets-grid">
-                        
-                        <!-- BTC Sentiment -->
-                        <div class="asset-sentiment-card">
-                            <div class="asset-header">
-                                <h3 class="asset-name">Bitcoin (BTC)</h3>
-                                <span id="btc-badge" class="sentiment-badge neutral">ANALYZING</span>
-                            </div>
-                            <div class="sentiment-score">
-                                <div class="score-circle" data-score="0">
-                                    <svg viewBox="0 0 100 100">
-                                        <circle cx="50" cy="50" r="45" class="circle-bg"></circle>
-                                        <circle id="btc-circle" cx="50" cy="50" r="45" class="circle-progress" 
-                                                style="stroke-dashoffset: 282.6"></circle>
-                                    </svg>
-                                    <span id="btc-score" class="score-text">0</span>
-                                </div>
-                                <p class="score-label">Sentiment Score</p>
-                            </div>
-                            <div class="news-headlines">
-                                <h4 class="headlines-title">Key Headlines:</h4>
-                                <ul class="headlines-list" id="btc-headlines">
-                                    <li>Loading headlines...</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- ETH Sentiment -->
-                        <div class="asset-sentiment-card">
-                            <div class="asset-header">
-                                <h3 class="asset-name">Ethereum (ETH)</h3>
-                                <span id="eth-badge" class="sentiment-badge neutral">ANALYZING</span>
-                            </div>
-                            <div class="sentiment-score">
-                                <div class="score-circle" data-score="0">
-                                    <svg viewBox="0 0 100 100">
-                                        <circle cx="50" cy="50" r="45" class="circle-bg"></circle>
-                                        <circle id="eth-circle" cx="50" cy="50" r="45" class="circle-progress" 
-                                                style="stroke-dashoffset: 282.6"></circle>
-                                    </svg>
-                                    <span id="eth-score" class="score-text">0</span>
-                                </div>
-                                <p class="score-label">Sentiment Score</p>
-                            </div>
-                            <div class="news-headlines">
-                                <h4 class="headlines-title">Key Headlines:</h4>
-                                <ul class="headlines-list" id="eth-headlines">
-                                    <li>Loading headlines...</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- SOL Sentiment -->
-                        <div class="asset-sentiment-card">
-                            <div class="asset-header">
-                                <h3 class="asset-name">Solana (SOL)</h3>
-                                <span id="sol-badge" class="sentiment-badge neutral">ANALYZING</span>
-                            </div>
-                            <div class="sentiment-score">
-                                <div class="score-circle" data-score="0">
-                                    <svg viewBox="0 0 100 100">
-                                        <circle cx="50" cy="50" r="45" class="circle-bg"></circle>
-                                        <circle id="sol-circle" cx="50" cy="50" r="45" class="circle-progress" 
-                                                style="stroke-dashoffset: 282.6"></circle>
-                                    </svg>
-                                    <span id="sol-score" class="score-text">0</span>
-                                </div>
-                                <p class="score-label">Sentiment Score</p>
-                            </div>
-                            <div class="news-headlines">
-                                <h4 class="headlines-title">Key Headlines:</h4>
-                                <ul class="headlines-list" id="sol-headlines">
-                                    <li>Loading headlines...</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
+        <!-- Empty State -->
+        <div id="empty-state" class="text-center py-16">
+            <div class="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                </svg>
             </div>
-        </section>
+            <h2 class="text-2xl font-bold text-slate-900 mb-2">No scenarios yet</h2>
+            <p class="text-slate-600 mb-6">Create your first scenario to start strategic planning</p>
+            <button id="empty-create-btn" class="bg-violet-600 hover:bg-violet-700 text-white px-6 py-2 rounded-lg inline-flex items-center gap-2 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Create First Scenario
+            </button>
+        </div>
 
-        <!-- TRADING BUDGETING TAB -->
-        <section id="budgeting-tab" class="tab-content">
-            <div class="container">
-                
-                <div class="page-header">
-                    <h1 class="page-title">Trading Budget Allocation</h1>
-                    <p class="page-subtitle">AI-optimized spending strategy for spot and leverage trading</p>
+        <!-- Tab Content Container -->
+        <div id="tab-content">
+            <!-- Overview Tab -->
+            <div id="overview-content" class="tab-content active">
+                <div id="selection-banner" class="hidden bg-violet-50 border border-violet-200 rounded-lg p-4 flex items-center justify-between mb-6">
+                    <p class="text-slate-700"><span id="selection-count">0</span> scenario(s) selected</p>
+                    <div class="flex gap-2">
+                        <button id="compare-selected-btn" class="hidden px-4 py-2 bg-white border border-violet-300 rounded-lg text-violet-700 hover:bg-violet-50 transition-colors text-sm">
+                            Compare Selected
+                        </button>
+                        <button id="clear-selection-btn" class="px-4 py-2 text-slate-600 hover:text-slate-900 transition-colors text-sm">
+                            Clear Selection
+                        </button>
+                    </div>
                 </div>
-
-                <!-- Budget Configuration Card -->
-                <div class="card budget-config-card">
-                    <h2 class="card-title">Configure Your Budget</h2>
-                    
-                    <div class="budget-config-grid">
-                        <div class="config-section">
-                            <div class="form-group">
-                                <label for="total-budget-input">Total Budget ($)</label>
-                                <input 
-                                    type="number" 
-                                    id="total-budget-input" 
-                                    placeholder="1000"
-                                    value="1000"
-                                    class="input-field"
-                                    oninput="window.updateTradingBudgetPreview()"
-                                >
-                            </div>
-
-                            <div class="form-group">
-                                <label for="trading-percent-input">
-                                    Trading Budget Allocation
-                                    <span class="label-hint">(% of total budget for trading)</span>
-                                </label>
-                                <div class="slider-container">
-                                    <input 
-                                        type="range" 
-                                        id="trading-percent-input" 
-                                        min="10" 
-                                        max="100" 
-                                        value="30" 
-                                        class="slider"
-                                        oninput="window.updateTradingBudgetPreview()"
-                                    >
-                                    <div class="slider-value">
-                                        <span id="trading-percent-display">30</span>%
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="budget-preview">
-                            <div class="preview-item">
-                                <span class="preview-label">Total Budget</span>
-                                <span class="preview-value" id="preview-total">$1,000.00</span>
-                            </div>
-                            <div class="preview-arrow">→</div>
-                            <div class="preview-item highlight">
-                                <span class="preview-label">Trading Budget</span>
-                                <span class="preview-value" id="preview-trading">$300.00</span>
-                            </div>
-                            <div class="preview-item">
-                                <span class="preview-label">Savings/Reserve</span>
-                                <span class="preview-value" id="preview-savings">$700.00</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button onclick="window.calculateTradingBudget()" class="btn-primary" id="budget-btn">
-                        💰 Calculate Trading Budget
-                    </button>
-                </div>
-
-                <!-- Loading State -->
-                <div id="budget-loading" class="loading-state hidden">
-                    <div class="spinner"></div>
-                    <p class="loading-text">AI agents calculating optimal allocation...</p>
-                </div>
-
-                <!-- Budget Results -->
-                <div id="budget-results" class="hidden">
-                    
-                    <!-- Budget Breakdown Summary -->
-                    <div class="card">
-                        <h2 class="card-title">Budget Breakdown</h2>
-                        <div class="budget-summary-flow">
-                            <div class="flow-item">
-                                <div class="flow-icon">💰</div>
-                                <div class="flow-label">Total Budget</div>
-                                <div class="flow-value" id="result-total-budget">$0</div>
-                            </div>
-                            <div class="flow-arrow">→</div>
-                            <div class="flow-item highlight">
-                                <div class="flow-icon">📈</div>
-                                <div class="flow-label">Trading Budget</div>
-                                <div class="flow-value" id="result-trading-budget">$0</div>
-                                <div class="flow-sublabel" id="result-trading-percent">0%</div>
-                            </div>
-                            <div class="flow-arrow">→</div>
-                            <div class="flow-item">
-                                <div class="flow-icon">🏦</div>
-                                <div class="flow-label">Savings</div>
-                                <div class="flow-value" id="result-savings-budget">$0</div>
-                                <div class="flow-sublabel" id="result-savings-percent">0%</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Trading Allocation Strategy -->
-                    <div class="card">
-                        <h2 class="card-title">Trading Budget Allocation Strategy</h2>
-                        <p class="card-description">How your trading budget is distributed across different strategies</p>
-                    </div>
-
-                    <div class="allocation-grid">
-                        
-                        <!-- Spot Trading -->
-                        <div class="allocation-card spot">
-                            <div class="allocation-header">
-                                <div class="allocation-icon">📊</div>
-                                <h3 class="allocation-title">Spot Trading</h3>
-                            </div>
-                            <div class="allocation-amount">
-                                <span class="amount-value" id="spot-amount">$0</span>
-                                <span class="amount-percentage" id="spot-percentage">0%</span>
-                            </div>
-                            <p class="allocation-description">
-                                Conservative long-term holdings with lower risk
-                            </p>
-                            <div class="allocation-breakdown">
-                                <div class="breakdown-item">
-                                    <span>BTC</span>
-                                    <span id="spot-btc">$0</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>ETH</span>
-                                    <span id="spot-eth">$0</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>SOL</span>
-                                    <span id="spot-sol">$0</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Low Leverage -->
-                        <div class="allocation-card low-leverage">
-                            <div class="allocation-header">
-                                <div class="allocation-icon">⚡</div>
-                                <h3 class="allocation-title">Low Leverage (2-5x)</h3>
-                            </div>
-                            <div class="allocation-amount">
-                                <span class="amount-value" id="low-leverage-amount">$0</span>
-                                <span class="amount-percentage" id="low-leverage-percentage">0%</span>
-                            </div>
-                            <p class="allocation-description">
-                                Moderate risk with controlled leverage exposure
-                            </p>
-                            <div class="allocation-breakdown">
-                                <div class="breakdown-item">
-                                    <span>Max Position</span>
-                                    <span id="low-lev-max-position">$0</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Recommended Leverage</span>
-                                    <span>3x</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Stop Loss</span>
-                                    <span>-15%</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- High Leverage -->
-                        <div class="allocation-card high-leverage">
-                            <div class="allocation-header">
-                                <div class="allocation-icon">🚀</div>
-                                <h3 class="allocation-title">High Leverage (>5x)</h3>
-                            </div>
-                            <div class="allocation-amount">
-                                <span class="amount-value" id="high-leverage-amount">$0</span>
-                                <span class="amount-percentage" id="high-leverage-percentage">0%</span>
-                            </div>
-                            <p class="allocation-description">
-                                High risk, high reward - use with extreme caution
-                            </p>
-                            <div class="allocation-breakdown">
-                                <div class="breakdown-item">
-                                    <span>Max Position</span>
-                                    <span id="high-lev-max-position">$0</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Recommended Leverage</span>
-                                    <span>10x</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Stop Loss</span>
-                                    <span>-8%</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cash Reserve -->
-                        <div class="allocation-card reserve">
-                            <div class="allocation-header">
-                                <div class="allocation-icon">💵</div>
-                                <h3 class="allocation-title">Cash Reserve</h3>
-                            </div>
-                            <div class="allocation-amount">
-                                <span class="amount-value" id="reserve-amount">$0</span>
-                                <span class="amount-percentage" id="reserve-percentage">0%</span>
-                            </div>
-                            <p class="allocation-description">
-                                Emergency fund and opportunity capital
-                            </p>
-                            <div class="allocation-breakdown">
-                                <div class="breakdown-item">
-                                    <span>Purpose</span>
-                                    <span>Safety Buffer</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Strategy</span>
-                                    <span>DCA on Dips</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Risk Management Tips -->
-                    <div class="card tips-card">
-                        <h2 class="card-title">⚠️ Risk Management Tips</h2>
-                        <ul class="tips-list">
-                            <li>Never risk more than you can afford to lose</li>
-                            <li>Always use stop-loss orders on leveraged positions</li>
-                            <li>Avoid over-leveraging - keep positions manageable</li>
-                            <li>Monitor liquidation prices closely on margin trades</li>
-                            <li>Maintain your cash reserve for unexpected opportunities</li>
-                            <li>Only trade with your designated trading budget</li>
-                        </ul>
-                    </div>
-
-                </div>
-
+                <div id="scenarios-grid" class="grid gap-6 md:grid-cols-2"></div>
             </div>
-        </section>
 
+            <!-- Compare Tab -->
+            <div id="compare-content" class="tab-content hidden"></div>
+
+            <!-- Insights Tab -->
+            <div id="insights-content" class="tab-content hidden"></div>
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p>⚠️ Not financial advice. For educational purposes only.</p>
-            <p>Powered by NVIDIA Nemotron AI</p>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 flex flex-col items-center gap-4">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+            <p class="text-slate-700">Analyzing scenario with AI...</p>
         </div>
-    </footer>
+    </div>
 
-    <script src="app.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
