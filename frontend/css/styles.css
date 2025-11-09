@@ -251,6 +251,11 @@ button:disabled {
   color: #d97706;
 }
 
+.badge-danger {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
 /* Metric card */
 .metric-card {
   padding: 8px;

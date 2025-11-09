@@ -21,13 +21,17 @@ function pct(n, fallback = 70) {
 
 function buildScenarioText(d) {
   const parts = [
-    `${d.name}: ${d.description}`,
-    `Target market: ${d.targetMarket}`,
-    `Timeline: ${d.timeline}`,
+    `Feature: ${d.featureName || d.name}`,
+    `Problem: ${d.problemStatement || d.description}`,
+    `Target users: ${d.targetUsers || d.targetMarket}`,
+    `Success metrics: ${d.successMetrics || ''}`,
   ];
+  if (d.timeline) parts.push(`Timeline: ${d.timeline}`);
   if (d.resources) parts.push(`Resources: ${d.resources}`);
-  if (Array.isArray(d.assumptions) && d.assumptions.length)
-    parts.push(`Assumptions: ${d.assumptions.join('; ')}`);
+  if (Array.isArray(d.constraints) && d.constraints.length)
+    parts.push(`Constraints: ${d.constraints.join('; ')}`);
+  else if (Array.isArray(d.assumptions) && d.assumptions.length)
+    parts.push(`Constraints: ${d.assumptions.join('; ')}`);
   return parts.join('. ') + '.';
 }
 
@@ -48,50 +52,123 @@ const API = {
       }
       const result = await response.json();
 
-      const scores = result?.scores || {};
-      const reasons = result?.reasons || {};
-      const impacts = result?.impacts || {};
-      const rec = result?.recommendation || {};
-      const topRisks = Array.isArray(result?.top_risks) ? result.top_risks : [];
-      const opps = Array.isArray(result?.opportunities) ? result.opportunities : [];
+      // Extract all lifecycle sections
+      const productStrategy = result?.product_strategy_ideation || {};
+      const requirements = result?.requirements_development || {};
+      const marketResearch = result?.customer_market_research || {};
+      const prototypeTesting = result?.prototype_testing_plan || {};
+      const gotoExecution = result?.goto_execution || {};
+      const featureScores = Array.isArray(result?.feature_impact_scores) ? result.feature_impact_scores : [];
 
-      const feasibility = pct(scores.overall, 70);
-      const impact = pct((scores.customer ?? 0) + (scores.competitive ?? 0) + 50, 75);
+      // Get user stories
+      const userStories = Array.isArray(requirements.user_stories) ? requirements.user_stories : [];
+      const featureList = Array.isArray(requirements.feature_list) ? requirements.feature_list : [];
+      const taskBreakdown = Array.isArray(requirements.task_breakdown) ? requirements.task_breakdown : [];
 
+      // Get highest impact score for main display (first feature, sorted highest to lowest)
+      const topFeature = featureScores.length > 0 ? featureScores[0] : null;
+      const impactScore = topFeature ? pct(topFeature.impact_score ?? 70, 70) : 70;
+      const impactRationale = topFeature?.reasoning || '';
+
+      // Get competitor analysis
+      const competitors = Array.isArray(marketResearch.competitor_analysis) ? marketResearch.competitor_analysis : [];
+      const gapsInsights = Array.isArray(marketResearch.gaps_insights) ? marketResearch.gaps_insights : [];
+      const feasibilityConstraints = Array.isArray(marketResearch.feasibility_constraints) ? marketResearch.feasibility_constraints : [];
+
+      // Get prototype and testing info
+      const validationTests = Array.isArray(prototypeTesting.quick_validation_tests) ? prototypeTesting.quick_validation_tests : [];
+      const userTesting = prototypeTesting.first_round_user_testing || {};
+
+      // Get GTM info
+      const persona = gotoExecution.persona || {};
+      const messaging = gotoExecution.messaging_positioning || {};
+      const launchPlan = gotoExecution.mini_launch_plan || {};
+      const successMeasurements = Array.isArray(gotoExecution.success_measurements) ? gotoExecution.success_measurements : [];
+
+      // Collect all risk factors from lifecycle data
       const riskList = [
-        impacts.risk, impacts.customer, impacts.competitive, impacts.cost,
-        ...topRisks.map(r => `${r.title} — Mitigation: ${r.mitigation}`),
+        // From market research - feasibility constraints are risks
+        ...feasibilityConstraints.map(c => `Risk: ${c}`),
+        // From gaps/insights - potential risks
+        ...gapsInsights.filter(g => g.toLowerCase().includes('risk') || g.toLowerCase().includes('challenge')).map(g => `Risk: ${g}`),
+        // From prototype testing - testing risks
+        ...validationTests.filter(t => t.purpose && (t.purpose.toLowerCase().includes('risk') || t.purpose.toLowerCase().includes('validate risk'))).map(t => `Testing Risk: ${t.test || ''} - ${t.purpose || ''}`),
       ].filter(Boolean);
 
-      const oppList = [
-        ...opps,
-        ...(reasons.competitive && /advantage|position|differentiation/i.test(reasons.competitive) ? [reasons.competitive] : []),
-        ...(reasons.customer && /growth|upsell|benefit|retention/i.test(reasons.customer) ? [reasons.customer] : []),
-      ].filter(Boolean).slice(0, 6);
+      // Create user stories list with full details for display
+      const userStoriesList = userStories.map(us => {
+        if (typeof us === 'string') return us;
+        const story = us.story || '';
+        const criteria = Array.isArray(us.acceptance_criteria) && us.acceptance_criteria.length > 0 
+          ? us.acceptance_criteria 
+          : [];
+        return { story, criteria };
+      }).filter(us => us.story || typeof us === 'string');
+
+      // Create opportunities list (for backwards compatibility, show user stories)
+      const oppList = userStoriesList.map(us => {
+        if (typeof us === 'string') return us;
+        return us.story;
+      }).filter(Boolean);
+
+      // Collect strategic recommendations from multiple sources
+      const strategicRecommendations = [
+        productStrategy.strategic_framing,
+        productStrategy.opportunity_analysis,
+        messaging.value_proposition,
+      ].filter(Boolean);
+      
+      const recommendation = strategicRecommendations.length > 0 
+        ? strategicRecommendations.join(' ') 
+        : '';
 
       return {
         id: Date.now().toString(),
-        name: scenarioData.name,
-        description: scenarioData.description,
-        targetMarket: scenarioData.targetMarket,
+        name: scenarioData.featureName || scenarioData.name,
+        description: scenarioData.problemStatement || scenarioData.description,
+        targetMarket: scenarioData.targetUsers || scenarioData.targetMarket,
         timeline: scenarioData.timeline,
         resources: scenarioData.resources || null,
-        assumptions: scenarioData.assumptions || [],
+        assumptions: scenarioData.constraints || scenarioData.assumptions || [],
         createdAt: new Date().toISOString(),
         aiAnalysis: {
-          feasibility,
-          impact,
-          risks: riskList,
-          opportunities: oppList,
-          recommendation: rec.rationale || '',
+          impact: impactScore,  // Highest impact score (from first feature)
+          impactRationale: impactRationale,
+          risks: riskList,  // All risk factors from lifecycle
+          opportunities: oppList,  // User stories for display
+          userStories: userStoriesList,  // Full user stories with acceptance criteria
+          recommendation: recommendation,  // Strategic recommendations
+          strategicFraming: productStrategy.strategic_framing || '',
           keyMetrics: [
-            { label: 'Feasibility Score', value: `${feasibility}%`, trend: feasibility >= 70 ? 'up' : feasibility >= 50 ? 'neutral' : 'down' },
-            { label: 'Time to Market', value: scenarioData.timeline, trend: 'neutral' },
-            { label: 'Risk Level', value: `${pct(scores.risk, 50)}%`, trend: (scores.risk ?? 50) > 70 ? 'down' : (scores.risk ?? 50) > 50 ? 'neutral' : 'up' },
-            { label: 'Customer Impact', value: `${(scores.customer ?? 0) > 0 ? '+' : ''}${pct(scores.customer ?? 0, 0)}%`, trend: (scores.customer ?? 0) > 0 ? 'up' : (scores.customer ?? 0) < 0 ? 'down' : 'neutral' },
+            { label: 'Impact Score', value: `${impactScore}`, trend: impactScore >= 80 ? 'up' : impactScore >= 50 ? 'neutral' : 'down' },
           ],
-          aiReasons: reasons,
-          aiRecommendationFull: rec,
+          aiReasons: { impact: impactRationale },
+          // Full lifecycle data (unchanged)
+          lifecycle: {
+            productStrategy,
+            requirements: {
+              userStories,
+              featureList,
+              taskBreakdown,
+            },
+            marketResearch: {
+              competitors,
+              gapsInsights,
+              feasibilityConstraints,
+            },
+            prototypeTesting: {
+              whatToPrototype: prototypeTesting.what_to_prototype_first || '',
+              validationTests,
+              userTesting,
+            },
+            gotoExecution: {
+              persona,
+              messaging,
+              launchPlan,
+              successMeasurements,
+            },
+            featureScores, // All features with their impact scores
+          },
           aiRaw: result,
         },
       };
@@ -170,13 +247,8 @@ const API = {
 
   async deleteScenario(scenarioId) {
     // Kept for back-compat; routes to /tasks/{id}
-    try {
-      const response = await fetch(`${API_BASE_URL}/tasks/${scenarioId}`, { method: 'DELETE' });
-      return response.ok;
-    } catch (error) {
-      console.error('Error deleting scenario:', error);
-      return false;
-    }
+    // Use deleteTask for consistency
+    return this.deleteTask(scenarioId);
   },
 
   /* ================= Mock ================= */
